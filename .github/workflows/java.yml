@@ -134,7 +134,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: [8, 11 17, 18]
+        jdk: [8, 11, 17, 18]
     steps:
       - name: Set up Java
         uses: actions/setup-java@v3
