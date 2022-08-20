@@ -41,7 +41,7 @@
     <dep.fbs.version>1.12.0</dep.fbs.version>
     <dep.avro.version>1.10.0</dep.avro.version>
     <arrow.vector.classifier />
-    <forkCount>2C</forkCount>
+    <forkCount>2</forkCount>
     <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
     <errorprone.javac.version>9+181-r4173-1</errorprone.javac.version>
     <error_prone_core.version>2.13.1</error_prone_core.version>
@@ -400,11 +400,10 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M7</version>
           <configuration>
-            <useSystemClassLoader>false</useSystemClassLoader>
             <enableAssertions>true</enableAssertions>
             <childDelegation>true</childDelegation>
             <forkCount>${forkCount}</forkCount>
-            <reuseForks>false</reuseForks>
+            <reuseForks>true</reuseForks>
             <systemPropertyVariables>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
               <io.netty.tryReflectionSetAccessible>true</io.netty.tryReflectionSetAccessible>
@@ -884,6 +883,25 @@
           </plugin>
         </plugins>
       </reporting>
+    </profile>
+
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <reuseForks>false</reuseForks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
   </profiles>
