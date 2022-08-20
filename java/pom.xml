@@ -885,6 +885,27 @@
       </reporting>
     </profile>
 
+    <profile>
+      <id>windows</id>
+      <activation>
+        <jdk>[17,)</jdk>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkCount>${forkCount}</forkCount>
+              <reuseForks>false</reuseForks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>
