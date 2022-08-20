@@ -786,7 +786,7 @@
     <profile>
       <id>error-prone-jdk11+</id>
       <activation>
-        <jdk>[11,)</jdk>
+        <jdk>[11,]</jdk>
         <property>
           <name>!m2e.version</name>
         </property>
@@ -888,7 +888,7 @@
     <profile>
       <id>windows</id>
       <activation>
-        <jdk>[17,)</jdk>
+        <jdk>[17,]</jdk>
         <os>
           <family>windows</family>
         </os>
@@ -899,6 +899,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <reuseForks>false</reuseForks>
+              <forkCount>2C</forkCount>
             </configuration>
           </plugin>
         </plugins>
