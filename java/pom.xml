@@ -353,6 +353,7 @@
               <ignoredDependencies>
                 <!-- source annotations (not kept in compiled code) -->
                 <ignoredDependency>javax.annotation:javax.annotation-api:*</ignoredDependency>
+                <ignoredDependency>org.apache.hadoop:hadoop-client-api</ignoredDependency>
               </ignoredDependencies>
             </configuration>
           </execution>
@@ -397,8 +398,9 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M3</version>
+          <version>3.0.0-M7</version>
           <configuration>
+            <useSystemClassLoader>false</useSystemClassLoader>
             <enableAssertions>true</enableAssertions>
             <childDelegation>true</childDelegation>
             <forkCount>${forkCount}</forkCount>
