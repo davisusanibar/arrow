@@ -23,8 +23,6 @@
     <name>Arrow Gandiva</name>
     <description>Java wrappers around the native Gandiva SQL expression compiler.</description>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <protobuf.version>3.20.1</protobuf.version>
         <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
         <arrow.cpp.build.dir>../../../cpp/release-build</arrow.cpp.build.dir>
@@ -152,6 +150,19 @@
                     </execution>
                 </executions>
             </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <forkCount>0</forkCount>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-failsafe-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <forkMode>never</forkMode>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
