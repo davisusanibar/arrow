@@ -175,6 +175,7 @@
               <Extension-Name>org.apache.arrow</Extension-Name>
               <Built-By>${username}</Built-By>
               <url>https://arrow.apache.org/</url>
+              <Multi-Release>true</Multi-Release>
             </manifestEntries>
           </archive>
         </configuration>
