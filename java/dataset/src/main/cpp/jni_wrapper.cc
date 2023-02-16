@@ -93,6 +93,8 @@ void JniThrow(std::string message) { ThrowPendingException(message); }
 arrow::Result<std::shared_ptr<arrow::dataset::FileFormat>> GetFileFormat(
     jint file_format_id) {
   switch (file_format_id) {
+    case 0:
+      return std::make_shared<arrow::dataset::ParquetFileFormat>();
     case 1:
       return std::make_shared<arrow::dataset::IpcFileFormat>();
 #ifdef ARROW_ORC
@@ -587,12 +589,20 @@ Java_org_apache_arrow_dataset_file_JniWrapper_writeFromScannerToFile(
  * Signature: (Ljava/lang/String;J)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_apache_arrow_dataset_substrait_JniWrapper_executeSerializedPlan (
-    JNIEnv* env, jobject, jstring substrait_plan, jlong struct_array_stream) {
+    JNIEnv* env, jobject, jstring substrait_plan, jlong c_arrow_array_stream_address) {
   JNI_METHOD_START
   std::cout << "Executing Substrait Plan" << std::endl;
-  std::shared_ptr<arrow::Buffer> buffer = arrow::engine::SerializeJsonPlan(JStringToCString(env, substrait_plan)).ValueOrDie();
-  arrow::Result<std::shared_ptr<arrow::RecordBatchReader>> reader = arrow::engine::ExecuteSerializedPlan(*buffer);
-  JniAssertOkOrThrow(arrow::ExportRecordBatchReader(reader.ValueOrDie(), reinterpret_cast<struct ArrowArrayStream*>(struct_array_stream)));
+  auto* arrow_stream = reinterpret_cast<ArrowArrayStream*>(c_arrow_array_stream_address);
+  std::shared_ptr<arrow::Buffer> buffer = JniGetOrThrow(arrow::engine::SerializeJsonPlan(JStringToCString(env, substrait_plan)));
+  std::shared_ptr<arrow::RecordBatchReader> reader = JniGetOrThrow(arrow::engine::ExecuteSerializedPlan(*buffer));
+  // start test to validate if data was readed by JNI Wrapper
+  // std::shared_ptr<arrow::RecordBatch> batch = reader->Next().ValueOrDie();
+  // auto int32_array_a = std::static_pointer_cast<arrow::Int32Array>(batch->column(0));
+  // for (int32_t i = 0; i < 12; i++) {
+  //     std::cout << "int32_array_a->Value(i): " << int32_array_a->Value(i) << std::endl;
+  // }
+  // end test
+  JniAssertOkOrThrow(arrow::ExportRecordBatchReader(reader, arrow_stream));
   return true;
   JNI_METHOD_END(false)
 }

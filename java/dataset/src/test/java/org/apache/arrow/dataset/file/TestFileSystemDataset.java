@@ -37,9 +37,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import org.apache.arrow.c.ArrowArray;
-import org.apache.arrow.c.ArrowArrayStream;
-import org.apache.arrow.c.Data;
 import org.apache.arrow.dataset.CsvWriteSupport;
 import org.apache.arrow.dataset.OrcWriteSupport;
 import org.apache.arrow.dataset.ParquetWriteSupport;
@@ -49,7 +46,6 @@ import org.apache.arrow.dataset.jni.NativeMemoryPool;
 import org.apache.arrow.dataset.jni.NativeScanner;
 import org.apache.arrow.dataset.jni.TestNativeDataset;
 import org.apache.arrow.dataset.scanner.ScanOptions;
-import org.apache.arrow.dataset.substrait.JniWrapper;
 import org.apache.arrow.util.AutoCloseables;
 import org.apache.arrow.vector.FieldVector;
 import org.apache.arrow.vector.IntVector;
@@ -364,52 +360,6 @@ public class TestFileSystemDataset extends TestNativeDataset {
 
     AutoCloseables.close(datum);
     AutoCloseables.close(factory);
-  }
-
-  public static String getSubstraitPlan(){
-    return "{\n" +
-        "  \"version\": { \"major_number\": 9999, \"minor_number\": 9999, \"patch_number\": 9999 },\n" +
-        "  \"relations\": [\n" +
-        "    {\"rel\": {\n" +
-        "      \"read\": {\n" +
-        "        \"base_schema\": {\n" +
-        "          \"struct\": {\n" +
-        "            \"types\": [\n" +
-        "                       {\"binary\": {}}\n" +
-        "                     ]\n" +
-        "          },\n" +
-        "          \"names\": [\n" +
-        "                    \"foo\"\n" +
-        "                    ]\n" +
-        "        },\n" +
-        "        \"local_files\": {\n" +
-        "          \"items\": [\n" +
-        "            {\n" +
-        "              \"uri_file\": \"file:///Users/dsusanibar/voltron/jiraarrow/fork/arrow/cpp/submodules/parquet-testing/data/binary.parquet\",\n" +
-        "              \"parquet\": {}\n" +
-        "            }\n" +
-        "          ]\n" +
-        "        }\n" +
-        "      }\n" +
-        "    }}\n" +
-        "  ]\n" +
-        "}";
-  }
-
-  @Test
-  public void testBaseSubstraitRead() throws Exception {
-    try (ArrowArrayStream arrowArrayStream = ArrowArrayStream.allocateNew(rootAllocator())) {
-      if (!org.apache.arrow.dataset.substrait.JniWrapper.get().executeSerializedPlan(getSubstraitPlan(), arrowArrayStream.memoryAddress())) {
-        System.out.println("No hay nada que mostrar!!!");
-      }
-      try (ArrowReader arrowReader = Data.importArrayStream(rootAllocator(), arrowArrayStream)){
-        System.out.println(arrowReader.getVectorSchemaRoot().contentToTSVString());
-        // It prints: Only columns name
-        // foo     __fragment_index        __batch_index   __last_in_fragment      __filename
-        System.out.println(arrowReader.getVectorSchemaRoot().getSchema());
-        // It prints: Schema<foo: Binary, __fragment_index: Int(32, true), __batch_index: Int(32, true), __last_in_fragment: Bool, __filename: Utf8>
-      }
-    }
   }
 
   @Test
