@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-set(ArrowSubstrait_DIR "/build/java_jni/java-jni/lib/x86_64/cmake/ArrowSubstrait")
+set(ArrowSubstrait_DIR "/arrow/java-dist/x86_64/cmake/ArrowSubstrait")
 
 find_package(ArrowDataset REQUIRED)
 find_package(ArrowSubstrait REQUIRED)
