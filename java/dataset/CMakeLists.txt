@@ -15,6 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
+set(CMAKE_PREFIX_PATH "/arrow/java-dist/lib/x86_64/cmake/ArrowSubstrait")
+
 find_package(ArrowDataset REQUIRED)
 find_package(ArrowSubstrait REQUIRED)
 
