@@ -58,6 +58,9 @@ arrow::Result<std::shared_ptr<arrow::Schema>> FromSchemaByteArray(JNIEnv* env,
 arrow::Status ExportRecordBatch(JNIEnv* env, const std::shared_ptr<RecordBatch>& batch,
                                 jlong struct_array);
 
+arrow::Status ExportRecordBatchReader(JNIEnv* env, const std::shared_ptr<arrow::RecordBatchReader>& batch,
+                                jlong struct_array_stream);
+
 /// \brief Import arrow::RecordBatch from JVM language side. The input data should
 /// ideally be exported from specific JNI utilities from JVM language side and should
 /// conform to C data interface specification.

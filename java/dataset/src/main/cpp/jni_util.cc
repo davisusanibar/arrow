@@ -23,6 +23,8 @@
 #include "arrow/c/bridge.h"
 #include "arrow/c/helpers.h"
 #include "arrow/util/logging.h"
+#include "arrow/api.h"
+#include "arrow/engine/substrait/util.h"
 
 namespace arrow {
 namespace dataset {
@@ -354,6 +356,12 @@ arrow::Result<std::shared_ptr<RecordBatch>> ImportRecordBatch(
     JNIEnv* env, const std::shared_ptr<Schema>& schema, jlong struct_array) {
   return arrow::ImportRecordBatch(reinterpret_cast<struct ArrowArray*>(struct_array),
                                   schema);
+}
+
+arrow::Status ExportRecordBatchReader(JNIEnv* env, const std::shared_ptr<arrow::RecordBatchReader>& batch,
+                                jlong struct_array_stream) {
+  return arrow::ExportRecordBatchReader(batch,
+                                  reinterpret_cast<struct ArrowArrayStream*>(struct_array_stream));
 }
 
 }  // namespace jni

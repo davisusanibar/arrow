@@ -151,6 +151,7 @@
             <exclude>**/*.tbl</exclude>
             <exclude>**/*.iml</exclude>
             <exclude>**/flight.properties</exclude>
+            <exclude>**/.idea/**</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -1159,9 +1160,9 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>ninja</executable>
+                  <executable>make</executable>
                   <commandlineArgs>
-                    install
+                    -j8
                   </commandlineArgs>
                   <workingDirectory>../cpp-jni</workingDirectory>
                   <skip>${cpp.dependencies.builded}</skip>

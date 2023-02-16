@@ -29,7 +29,11 @@
 #include "jni_util.h"
 #include "org_apache_arrow_dataset_file_JniWrapper.h"
 #include "org_apache_arrow_dataset_jni_JniWrapper.h"
+#include "org_apache_arrow_dataset_substrait_JniWrapper.h"
 #include "org_apache_arrow_dataset_jni_NativeMemoryPool.h"
+#include "arrow/engine/substrait/util.h"
+#include "arrow/util/io_util.h"
+#include "iostream"
 
 namespace {
 
@@ -89,8 +93,6 @@ void JniThrow(std::string message) { ThrowPendingException(message); }
 arrow::Result<std::shared_ptr<arrow::dataset::FileFormat>> GetFileFormat(
     jint file_format_id) {
   switch (file_format_id) {
-    case 0:
-      return std::make_shared<arrow::dataset::ParquetFileFormat>();
     case 1:
       return std::make_shared<arrow::dataset::IpcFileFormat>();
 #ifdef ARROW_ORC
@@ -577,4 +579,20 @@ Java_org_apache_arrow_dataset_file_JniWrapper_writeFromScannerToFile(
   options.max_partitions = max_partitions;
   JniAssertOkOrThrow(arrow::dataset::FileSystemDataset::Write(options, scanner));
   JNI_METHOD_END()
+}
+
+/*
+ * Class:     org_apache_arrow_dataset_substrait_JniWrapper
+ * Method:    executeSerializedPlan
+ * Signature: (Ljava/lang/String;J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_apache_arrow_dataset_substrait_JniWrapper_executeSerializedPlan (
+    JNIEnv* env, jobject, jstring substrait_plan, jlong struct_array_stream) {
+  JNI_METHOD_START
+  std::cout << "Executing Substrait Plan" << std::endl;
+  std::shared_ptr<arrow::Buffer> buffer = arrow::engine::SerializeJsonPlan(JStringToCString(env, substrait_plan)).ValueOrDie();
+  arrow::Result<std::shared_ptr<arrow::RecordBatchReader>> reader = arrow::engine::ExecuteSerializedPlan(*buffer);
+  JniAssertOkOrThrow(arrow::ExportRecordBatchReader(reader.ValueOrDie(), reinterpret_cast<struct ArrowArrayStream*>(struct_array_stream)));
+  return true;
+  JNI_METHOD_END(false)
 }
