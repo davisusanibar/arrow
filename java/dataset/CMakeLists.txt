@@ -15,8 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-set(CMAKE_FIND_DEBUG_MODE 1)
-
 find_package(ArrowDataset REQUIRED)
 find_package(ArrowSubstrait REQUIRED)
 
