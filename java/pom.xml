@@ -1160,9 +1160,9 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>make</executable>
+                  <executable>ninja</executable>
                   <commandlineArgs>
-                    -j8
+                    install
                   </commandlineArgs>
                   <workingDirectory>../cpp-jni</workingDirectory>
                   <skip>${cpp.dependencies.builded}</skip>
