@@ -19,6 +19,7 @@
 
 set -ex
 
+
 arrow_dir=${1}
 build_dir=${2}
 normalized_arch=$(arch)
