@@ -108,8 +108,10 @@ jobs:
           set -e
           # make brew Java available to CMake
           if [ "{{ arch }}" = "aarch_64" ]; then
+            export CURL_ROOT=$(brew --prefix curl)
             export JAVA_HOME=$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home
           fi
+          arrow/ci/scripts/install_gcs_testbench.sh default
           arrow/ci/scripts/java_jni_macos_build.sh \
             $GITHUB_WORKSPACE/arrow \
             $GITHUB_WORKSPACE/arrow/cpp-build \

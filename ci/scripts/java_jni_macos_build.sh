@@ -19,6 +19,7 @@
 
 set -ex
 
+
 arrow_dir=${1}
 build_dir=${2}
 normalized_arch=$(arch)
@@ -46,6 +47,7 @@ export ARROW_ACERO
 export ARROW_DATASET
 : ${ARROW_GANDIVA:=ON}
 export ARROW_GANDIVA
+: ${ARROW_GCS:=ON}
 : ${ARROW_ORC:=ON}
 export ARROW_ORC
 : ${ARROW_PARQUET:=ON}
@@ -67,6 +69,7 @@ mkdir -p "${build_dir}/cpp"
 pushd "${build_dir}/cpp"
 
 cmake \
+  -Dabsl_SOURCE=BUNDLED \
   -DARROW_ACERO=${ARROW_ACERO} \
   -DARROW_BUILD_SHARED=OFF \
   -DARROW_BUILD_TESTS=${ARROW_BUILD_TESTS} \
@@ -76,6 +79,7 @@ cmake \
   -DARROW_DEPENDENCY_USE_SHARED=OFF \
   -DARROW_GANDIVA=${ARROW_GANDIVA} \
   -DARROW_GANDIVA_STATIC_LIBSTDCPP=ON \
+  -DARROW_GCS=${ARROW_GCS} \
   -DARROW_ORC=${ARROW_ORC} \
   -DARROW_PARQUET=${ARROW_PARQUET} \
   -DARROW_S3=${ARROW_S3} \
@@ -85,6 +89,7 @@ cmake \
   -DCMAKE_INSTALL_LIBDIR=lib \
   -DCMAKE_INSTALL_PREFIX=${install_dir} \
   -DCMAKE_UNITY_BUILD=${CMAKE_UNITY_BUILD} \
+  -Dgoogle_cloud_cpp_storage_SOURCE=BUNDLED \
   -DGTest_SOURCE=BUNDLED \
   -DPARQUET_BUILD_EXAMPLES=OFF \
   -DPARQUET_BUILD_EXECUTABLES=OFF \
