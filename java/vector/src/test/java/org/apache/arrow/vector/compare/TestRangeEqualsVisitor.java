@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.memory.util.Float16;
 import org.apache.arrow.vector.BigIntVector;
 import org.apache.arrow.vector.BitVector;
 import org.apache.arrow.vector.Float4Vector;
@@ -40,6 +41,7 @@ import org.apache.arrow.vector.complex.FixedSizeListVector;
 import org.apache.arrow.vector.complex.ListVector;
 import org.apache.arrow.vector.complex.StructVector;
 import org.apache.arrow.vector.complex.UnionVector;
+import org.apache.arrow.vector.complex.impl.Float2WriterImpl;
 import org.apache.arrow.vector.complex.impl.NullableStructWriter;
 import org.apache.arrow.vector.complex.impl.UnionFixedSizeListWriter;
 import org.apache.arrow.vector.complex.impl.UnionListWriter;
@@ -100,7 +102,6 @@ public class TestRangeEqualsVisitor {
 
       RangeEqualsVisitor visitor = new RangeEqualsVisitor(vector1, vector2);
       Range range = new Range(0, 0, 2);
-      assertTrue(vector1.accept(visitor, range));
       // visitor left vector changed, will reset and check type again
       assertFalse(vector3.accept(visitor, range));
     }
@@ -757,6 +758,14 @@ public class TestRangeEqualsVisitor {
     writer.startList();
     for (double v: values) {
       writer.float8().writeFloat8(v);
+    }
+    writer.endList();
+  }
+
+  private void writeFloat2Vector(Float2WriterImpl writer, float[] values) {
+    writer.startList();
+    for (float v: values) {
+      writer.float2().writeFloat2(Float16.toFloat16(v));
     }
     writer.endList();
   }

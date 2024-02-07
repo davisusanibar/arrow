@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.BigIntVector;
+import org.apache.arrow.vector.Float2Vector;
 import org.apache.arrow.vector.Float4Vector;
 import org.apache.arrow.vector.Float8Vector;
 import org.apache.arrow.vector.IntVector;
@@ -145,25 +146,29 @@ public class TestTypeEqualsVisitor {
       // set children for vector1
       byte intTypeId = vector1.registerNewTypeId(Field.nullable("int", Types.MinorType.INT.getType()));
       byte longTypeId = vector1.registerNewTypeId(Field.nullable("long", Types.MinorType.BIGINT.getType()));
+      byte float16TypeId = vector1.registerNewTypeId(Field.nullable("float16", Types.MinorType.FLOAT2.getType()));
       byte floatTypeId = vector1.registerNewTypeId(Field.nullable("float", Types.MinorType.FLOAT4.getType()));
       byte doubleTypeId = vector1.registerNewTypeId(Field.nullable("double", Types.MinorType.FLOAT8.getType()));
 
-      vector1.addVector(floatTypeId, new Float4Vector("", allocator));
-      vector1.addVector(longTypeId, new BigIntVector("", allocator));
       vector1.addVector(intTypeId, new IntVector("", allocator));
+      vector1.addVector(longTypeId, new BigIntVector("", allocator));
+      vector1.addVector(float16TypeId, new Float2Vector("", allocator));
+      vector1.addVector(floatTypeId, new Float4Vector("", allocator));
       vector1.addVector(doubleTypeId, new Float8Vector("", allocator));
 
       // set children for vector2
       intTypeId = vector2.registerNewTypeId(Field.nullable("int", Types.MinorType.INT.getType()));
       longTypeId = vector2.registerNewTypeId(Field.nullable("long", Types.MinorType.BIGINT.getType()));
+      float16TypeId = vector2.registerNewTypeId(Field.nullable("float16", Types.MinorType.FLOAT2.getType()));
       floatTypeId = vector2.registerNewTypeId(Field.nullable("float", Types.MinorType.FLOAT4.getType()));
       doubleTypeId = vector2.registerNewTypeId(Field.nullable("double", Types.MinorType.FLOAT8.getType()));
 
       // add vectors in a different order
       vector2.addVector(intTypeId, new IntVector("", allocator));
+      vector2.addVector(longTypeId, new BigIntVector("", allocator));
+      vector2.addVector(float16TypeId, new Float2Vector("", allocator));
       vector2.addVector(floatTypeId, new Float4Vector("", allocator));
       vector2.addVector(doubleTypeId, new Float8Vector("", allocator));
-      vector2.addVector(longTypeId, new BigIntVector("", allocator));
 
       // compare ranges
       TypeEqualsVisitor typeVisitor =
@@ -174,6 +179,18 @@ public class TestTypeEqualsVisitor {
       typeVisitor =
           new TypeEqualsVisitor(vector2, /* check name */ true, /* check meta data */ true);
       assertFalse(typeVisitor.equals(vector1));
+    }
+  }
+
+  @Test
+  public void testTypeEqualsFloat2WithName() {
+    try (final Float2Vector right = new Float2Vector("float16", allocator);
+         final Float2Vector left1 = new Float2Vector("float16", allocator);
+         final Float2Vector left2 = new Float2Vector("float16_v2", allocator)) {
+
+      TypeEqualsVisitor visitor = new TypeEqualsVisitor(right);
+      assertTrue(visitor.equals(left1));
+      assertFalse(visitor.equals(left2));
     }
   }
 }

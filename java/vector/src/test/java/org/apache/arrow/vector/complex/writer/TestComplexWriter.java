@@ -31,9 +31,11 @@ import java.util.Set;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.memory.util.Float16;
 import org.apache.arrow.util.AutoCloseables;
 import org.apache.arrow.vector.BigIntVector;
 import org.apache.arrow.vector.DecimalVector;
+import org.apache.arrow.vector.Float2Vector;
 import org.apache.arrow.vector.Float4Vector;
 import org.apache.arrow.vector.Float8Vector;
 import org.apache.arrow.vector.IntVector;
@@ -60,6 +62,7 @@ import org.apache.arrow.vector.complex.impl.UnionWriter;
 import org.apache.arrow.vector.complex.reader.BaseReader.StructReader;
 import org.apache.arrow.vector.complex.reader.BigIntReader;
 import org.apache.arrow.vector.complex.reader.FieldReader;
+import org.apache.arrow.vector.complex.reader.Float2Reader;
 import org.apache.arrow.vector.complex.reader.Float4Reader;
 import org.apache.arrow.vector.complex.reader.Float8Reader;
 import org.apache.arrow.vector.complex.reader.IntReader;
@@ -1243,6 +1246,7 @@ public class TestComplexWriter {
 
       IntWriter intWriter = singleStructWriter.integer("intField");
       BigIntWriter bigIntWriter = singleStructWriter.bigInt("bigIntField");
+      Float2Writer float2Writer = singleStructWriter.float2("float2Field");
       Float4Writer float4Writer = singleStructWriter.float4("float4Field");
       Float8Writer float8Writer = singleStructWriter.float8("float8Field");
       ListWriter listWriter = singleStructWriter.list("listField");
@@ -1258,6 +1262,7 @@ public class TestComplexWriter {
 
         intWriter.writeInt(intValue + i);
         bigIntWriter.writeBigInt(bigIntValue + (long) i);
+        float2Writer.writeFloat2(Float16.toFloat16((float) i));
         float4Writer.writeFloat4(float4Value + (float) i);
         float8Writer.writeFloat8(float8Value + (double) i);
 
@@ -1286,6 +1291,7 @@ public class TestComplexWriter {
 
       IntVector intVector = (IntVector) parent.getChild("intField");
       BigIntVector bigIntVector = (BigIntVector) parent.getChild("bigIntField");
+      Float2Vector float2Vector = (Float2Vector) parent.getChild("float2Field");
       Float4Vector float4Vector = (Float4Vector) parent.getChild("float4Field");
       Float8Vector float8Vector = (Float8Vector) parent.getChild("float8Field");
 
@@ -1294,6 +1300,8 @@ public class TestComplexWriter {
       capacity = intVector.getValueCapacity();
       assertTrue(capacity >= initialCapacity && capacity < initialCapacity * 2);
       capacity = bigIntVector.getValueCapacity();
+      assertTrue(capacity >= initialCapacity && capacity < initialCapacity * 2);
+      capacity = float2Vector.getValueCapacity();
       assertTrue(capacity >= initialCapacity && capacity < initialCapacity * 2);
       capacity = float4Vector.getValueCapacity();
       assertTrue(capacity >= initialCapacity && capacity < initialCapacity * 2);
@@ -1304,6 +1312,7 @@ public class TestComplexWriter {
 
       IntReader intReader = singleStructReader.reader("intField");
       BigIntReader bigIntReader = singleStructReader.reader("bigIntField");
+      Float2Reader float2Reader = singleStructReader.reader("float2Field");
       Float4Reader float4Reader = singleStructReader.reader("float4Field");
       Float8Reader float8Reader = singleStructReader.reader("float8Field");
       UnionListReader listReader = (UnionListReader) singleStructReader.reader("listField");
@@ -1312,6 +1321,7 @@ public class TestComplexWriter {
       for (int i = 0; i < initialCapacity; i++) {
         intReader.setPosition(i);
         bigIntReader.setPosition(i);
+        float2Reader.setPosition(i);
         float4Reader.setPosition(i);
         float8Reader.setPosition(i);
         listReader.setPosition(i);
@@ -1319,6 +1329,7 @@ public class TestComplexWriter {
 
         assertEquals(intValue + i, intReader.readInteger().intValue());
         assertEquals(bigIntValue + (long) i, bigIntReader.readLong().longValue());
+        assertEquals((float) i, Float16.toFloat(float2Reader.readShort()), 0);
         assertEquals(float4Value + (float) i, float4Reader.readFloat().floatValue(), 0);
         assertEquals(float8Value + (double) i, float8Reader.readDouble().doubleValue(), 0);
 
