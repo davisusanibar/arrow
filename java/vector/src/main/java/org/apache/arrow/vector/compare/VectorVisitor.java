@@ -26,6 +26,7 @@ import org.apache.arrow.vector.complex.DenseUnionVector;
 import org.apache.arrow.vector.complex.FixedSizeListVector;
 import org.apache.arrow.vector.complex.LargeListVector;
 import org.apache.arrow.vector.complex.ListVector;
+import org.apache.arrow.vector.complex.ListViewVector;
 import org.apache.arrow.vector.complex.NonNullableStructVector;
 import org.apache.arrow.vector.complex.UnionVector;
 
@@ -57,5 +58,7 @@ public interface VectorVisitor<OUT, IN> {
   OUT visit(NullVector left, IN value);
 
   OUT visit(ExtensionTypeVector<?> left, IN value);
+
+  // OUT visit(ListViewVector valueVectors, IN value);
 }
 
